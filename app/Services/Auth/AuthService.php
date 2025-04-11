@@ -4,6 +4,7 @@ namespace App\Services\Auth;
 
 use App\Exceptions\Types\CustomException;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
@@ -19,7 +20,9 @@ class AuthService
     public function login($request): array
     {
         $user = User::query()->where('email',$request['email'])->first();
-        if (!$user ) throw new CustomException('Incorrect email or password.',400);
+        if (!Hash::check($request['password'], $user->password)) {
+            throw new CustomException('Incorrect email or password.', 400);
+        }
         return ['data' => $user, 'message' => 'Verification code sent, please verify.','code' => 200];
     }
 

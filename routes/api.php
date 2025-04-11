@@ -28,7 +28,7 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-Route::middleware(['auth:sanctum', 'scopes:refresh'])->group(function () {
+Route::middleware(['auth:sanctum', 'scopes:access-api'])->group(function () {
     Route::prefix('user')->group(function () {
         Route::controller(ImageController::class)->group(function () {
             Route::post('uploadImage', 'uploadImage')->name('upload.image');

@@ -8,9 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class ImageService
+class ImageService extends MediaService
 {
-    public function uploadImage(Request $request,$model,$id) {
+    public function uploadImage(Request $request,$model,$id): array
+    {
 
         $folder = strtolower(class_basename($model));
 
@@ -19,16 +20,12 @@ class ImageService
 
         Storage::disk('public')->put($imagePath, file_get_contents($request->file('image')));
 
-        $media = Media::create([
-            'mediable_id' => $id,
-            'mediable_type' => $model,
-            'url' => $imagePath,
-        ]);
+        $media = $this->createMedia($id,$model,$imagePath);
 
         return ['data' => $media,'message' => 'Image Created Successfully.','code' => 200];
     }
 
-    public function uploadMultipleImages(Request $request, $model, $id)
+    public function uploadMultipleImages(Request $request, $model, $id): array
     {
         $images = [];
 
@@ -41,7 +38,8 @@ class ImageService
         return ['data' => $images, 'message' => 'Images uploaded successfully.', 'code' => 200];
     }
 
-    public function deleteImage($mediaId,$model) {
+    public function deleteImage($mediaId,$model): array
+    {
 
         $media = Media::where('mediable_id',$mediaId)
             ->where('mediable_type',$model)

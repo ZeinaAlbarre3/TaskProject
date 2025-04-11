@@ -40,7 +40,7 @@ class AuthController extends Controller
 
         $code = $this->verificationService->generateCode($data['data'],'register',Verification::VERIFY_CODE->value);
 
-        $this->emailService->sendEmail($data['data'],new SendCodeMail($code));
+    //    $this->emailService->sendEmail($data['data'],new SendCodeMail($code));
 
         return self::Success([
             'user' => $data['data'],
@@ -54,7 +54,7 @@ class AuthController extends Controller
 
         $code = $this->verificationService->generateCode($data['data'],'login',Verification::TWO_FA->value);
 
-        $this->emailService->sendEmail($data['data'],new SendCodeMail($code));
+     //   $this->emailService->sendEmail($data['data'],new SendCodeMail($code));
 
         return self::Success([
             'user' => $data['data'],
@@ -73,5 +73,7 @@ class AuthController extends Controller
         $data = $this->tokenService->refreshToken($request);
         return self::Success( $data['data'],$data['message']);
     }
+
+
 
 }

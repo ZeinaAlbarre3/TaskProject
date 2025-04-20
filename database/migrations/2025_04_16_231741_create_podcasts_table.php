@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('media', function (Blueprint $table) {
+        Schema::create('podcasts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('mediable_id');
-            $table->string('mediable_type');
-            $table->string('type');
-            $table->string('category');
-            $table->string('url');
+            $table->string('title');
+            $table->text('description');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user');
+        Schema::dropIfExists('podcasts');
     }
 };

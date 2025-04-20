@@ -2,45 +2,50 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Enums\Media\MediaCategory;
 use App\Enums\Media\MediaModel;
+use App\Enums\Media\MediaFolder;
+use App\Enums\Media\MediaType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Media\MultipleImageRequest;
 use App\Http\Requests\Media\SingleImageRequest;
-use App\Services\Media\ImageService;
+use App\Models\Media;
+use App\Services\Media\UserImageService;
+use App\Services\Media\MediaService;
 use App\Traits\ResponseTrait;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class ImageController extends Controller
 {
     use ResponseTrait;
-    private ImageService $imageService;
+    private MediaService $mediaService;
+    private UserImageService  $imageService;
 
-    public function __construct(ImageService $imageService){
+    public function __construct(UserImageService $imageService){
         $this->imageService = $imageService;
     }
 
-    public function uploadImage(SingleImageRequest $request)
+    public function uploadImage(SingleImageRequest $request): JsonResponse
     {
-        $user = auth()->user()->id;
+        $userId = auth()->user()->id;
 
-        $data = $this->imageService->uploadImage($request, MediaModel::USER_MEDIA->value, $user);
+        $data = $this->imageService->uploadUserImage($request->file('image'), $userId);
 
         return self::success($data['data'],$data['message']);
     }
 
-    public function uploadMultipleImages(MultipleImageRequest $request)
+    public function uploadMultipleImages(MultipleImageRequest $request): JsonResponse
     {
-        $user = auth()->user()->id;
+        $userId = auth()->user()->id;
 
-        $data = $this->imageService->uploadMultipleImages($request, MediaModel::USER_MEDIA->value,$user);
+        $data = $this->imageService->uploadMultipleUserImages($request->file('images'), $userId);
 
         return self::success($data['data'],$data['message']);
-
     }
 
-    public function deleteImage($imageId)
+    public function deleteImage(Media $media): JsonResponse
     {
-        $data = $this->imageService->deleteImage($imageId,MediaModel::USER_MEDIA->value);
+        $data = $this->imageService->deleteUserImage($media);
 
         return self::success($data['data'],$data['message']);
     }

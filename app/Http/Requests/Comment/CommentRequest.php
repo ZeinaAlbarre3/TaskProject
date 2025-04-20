@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Media;
+namespace App\Http\Requests\Comment;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SingleImageRequest extends FormRequest
+class CommentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,15 +23,9 @@ class SingleImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'image.*.mimes' => 'Only jpeg, png, jpg, gif, svg images are allowed.',
-            'image.*.max' => 'Each image must not exceed 2MB in size.',
+            'body' => 'required|string',
+            'podcast_id' => 'required|exists:podcasts,id',
+            'parent_id' => 'nullable|exists:comments,id',
         ];
     }
 

@@ -5,7 +5,7 @@ namespace App\Http\Requests\Media;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class MultipleImageRequest extends FormRequest
+class SingleVideoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,17 +23,15 @@ class MultipleImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'images' => 'required|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'video' => 'required|file|mimetypes:video/mp4,video/avi,video/mpeg,video/quicktime|max:102400',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'images.required' => 'You must upload at least one image.',
-            'images.*.mimes' => 'Only jpeg, png, jpg, gif, svg images are allowed.',
-            'images.*.max' => 'Each image must not exceed 2MB in size.',
+            'video.mimes' => 'Only mp4, mov, avi... are allowed.',
+            'video.max' => 'Each video must not exceed 50MB in size.',
         ];
     }
 

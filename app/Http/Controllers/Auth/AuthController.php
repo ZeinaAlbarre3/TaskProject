@@ -13,6 +13,7 @@ use App\Services\Auth\PasswordResetService;
 use App\Services\Auth\TokenService;
 use App\Services\Auth\VerificationService;
 use App\Services\Email\EmailService;
+use App\Services\Media\UserImageService;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,25 +27,32 @@ class AuthController extends Controller
     private VerificationService $verificationService;
     private TokenService $tokenService;
     private EmailService $emailService;
+    private UserImageService $userImageService;
 
-    public function __construct(AuthService $authService,VerificationService  $verificationService,TokenService $tokenService,EmailService $emailService){
+    public function __construct(AuthService $authService,VerificationService  $verificationService,TokenService $tokenService,EmailService $emailService,UserImageService $userImageService){
         $this->authService = $authService;
         $this->verificationService = $verificationService;
         $this->tokenService = $tokenService;
         $this->emailService = $emailService;
+        $this->userImageService = $userImageService;
     }
 
     public function register(UserRegisterRequest $request): JsonResponse
     {
         $data = $this->authService->createUser($request->validated());
 
+        if ($request['profile_image']) {
+            $profileImage = $this->userImageService->uploadUserProfileImage($request->file('profile_image'), $data['data']->id);
+        }
+
         $code = $this->verificationService->generateCode($data['data'],'register',Verification::VERIFY_CODE->value);
 
-    //    $this->emailService->sendEmail($data['data'],new SendCodeMail($code));
+    //   $this->emailService->sendEmail($data['data'],new SendCodeMail($code));
 
         return self::Success([
             'user' => $data['data'],
             'code' => $code,
+            'profileImage' => $profileImage ?? null,
         ], $data['message']);
     }
 

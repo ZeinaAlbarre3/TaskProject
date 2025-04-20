@@ -19,7 +19,7 @@ class AuthService
      */
     public function login($request): array
     {
-        $user = User::query()->where('email',$request['email'])->first();
+        $user = User::query()->where('email',$request['email'])->firstOrFail();
         if (!Hash::check($request['password'], $user->password)) {
             throw new CustomException('Incorrect email or password.', 400);
         }
